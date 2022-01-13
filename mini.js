@@ -15,20 +15,40 @@ class PlatziReactive {
         */        
         this.$data = new Proxy(this.origen, {
             get(target, name) {
-            if (name in target) {
-                return target[name];
-            }
-            console.warn("La propiedad", name, "no existe");
-            return "";
+            if (Reflect.has(target, name)) {
+                return Reflect.get(target, name);
+                }
+                console.warn("La propiedad", name, "no existe");
+                return "";
             },
-            set() {}
+            set(target, name, value) {
+                Reflect.set(target, name, value);
+            }
         });
+
+        /* trampas  de proxy
+            handler.has, captura el operador in.
+            handler.get, captura el acceso a las propiedades.
+            handler.set, captura la escritura de las propiedades.
+        */
     }
   
     mount() {
       document.querySelectorAll("*[p-text]").forEach(el => {
         this.pText(el, this.origen, el.getAttribute("p-text"));
       });
+
+      document.querySelectorAll("*[p-model]").forEach(el => {
+        const name = el.getAttribute("p-model");
+        this.pModel(el, this.$data, name);
+  
+        el.addEventListener("input", () => {
+          Reflect.set(this.$data, name, el.value);
+        });
+      });
+
+
+
     }
   
     pText(el, target, name) {
