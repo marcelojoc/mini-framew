@@ -145,7 +145,7 @@
     <div id="app">
       <header>
         <h3>PlatziCommerce</h3>
-        <button class="cart">Carro ({{ cart.length }})</button>
+        <button class="cart" v-on:click="cartOpen = !cartOpen">Carro ({{ cart.length }})</button>
         <div class="cart-content" v-show="cartOpen">
           <div
             v-for="(prodCart, index) in cart"
@@ -153,13 +153,9 @@
             class="cart-content__product"
             :class="{ 'bg-gray': index & 1 }"
           >
-            <img
-              v-bind:src="prodCart.images[0].thumbnail"
-              :alt="prodCart.name.toUpperCase()"
-            />
+            <img v-bind:src="prodCart.images[0].thumbnail" :alt="prodCart.name.toUpperCase()" />
             <span>
-              {{ prodCart.name }} - $ {{ new
-              Intl.NumberFormat("es-CO").format(prodCart.price) }}
+              {{ prodCart.name }} - $ {{ new Intl.NumberFormat("es-CO").format(prodCart.price) }}
             </span>
           </div>
         </div>
@@ -173,6 +169,7 @@
               class="thumb"
               :class="{ active: activeImage === index }"
               :style="{ backgroundImage: 'url('+ image.thumbnail +')' }"
+              @click="activeImage = index"
             ></div>
           </div>
           <div class="product__image">
@@ -180,15 +177,10 @@
           </div>
         </section>
         <section class="description">
-          <h4>
-            {{ product.name.toUpperCase() }} {{ product.stock === 0 ? "😭" :
-            "😎" }}
-          </h4>
+          <h4>{{ product.name.toUpperCase() }} {{ product.stock === 0 ? "😭" : "😎" }}</h4>
           <span class="badge new" v-if="product.new">Nuevo</span>
           <span class="badge offer" v-if="product.offer">Oferta</span>
-          <p class="description__status" v-if="product.stock === 3">
-            Quedan pocas unidades!
-          </p>
+          <p class="description__status" v-if="product.stock === 3">Quedan pocas unidades!</p>
           <p class="description__status" v-else-if="product.stock === 2">
             El producto esta por terminarse!
           </p>
@@ -199,16 +191,21 @@
             $ {{ new Intl.NumberFormat("es-CO").format(product.price) }}
           </p>
           <p class="description__content">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt
-            atque dolorum corporis, reiciendis eaque temporibus quod magnam amet
-            ea natus delectus? Aut placeat ipsam minus labore voluptas. Porro,
-            vel aliquid!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt atque dolorum
+            corporis, reiciendis eaque temporibus quod magnam amet ea natus delectus? Aut placeat
+            ipsam minus labore voluptas. Porro, vel aliquid!
           </p>
           <div class="discount">
-            <span>Codigo de Descuent:</span>
-            <input type="text" placeholder="Ingresa tu codigo" />
+            <span>Codigo de Descuento:</span>
+            <input
+              type="text"
+              placeholder="Ingresa tu codigo"
+              @keyup.enter="product.price *= 50 / 100"
+            />
           </div>
-          <button :disabled="product.stock === 0">Agregar al carrito</button>
+          <button :disabled="product.stock === 0" @click="product.stock -= 1">
+            Agregar al carrito
+          </button>
         </section>
       </main>
     </div>
@@ -223,7 +220,7 @@
             product: {
               name: "Camara",
               price: 450_000,
-              stock: 1,
+              stock: 3,
               content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt
                 atque dolorum corporis, reiciendis eaque temporibus quod magnam amet
                 ea natus delectus? Aut placeat ipsam minus labore voluptas. Porro,
@@ -231,18 +228,18 @@
               images: [
                 {
                   image: "./images/camara.jpg",
-                  thumbnail: "./images/camara-thumb.jpg",
+                  thumbnail: "./images/camara-thumb.jpg"
                 },
                 {
                   image: "./images/camara-2.jpg",
-                  thumbnail: "./images/camara-2-thumb.jpg",
-                },
+                  thumbnail: "./images/camara-2-thumb.jpg"
+                }
               ],
               offer: true,
-              new: true,
+              new: true
             },
             activeImage: 0,
-            cartOpen: true,
+            cartOpen: false,
             cart: [
               {
                 name: "Camara PL",
@@ -255,15 +252,15 @@
                 images: [
                   {
                     image: "./images/camara.jpg",
-                    thumbnail: "./images/camara-thumb.jpg",
+                    thumbnail: "./images/camara-thumb.jpg"
                   },
                   {
                     image: "./images/camara-2.jpg",
-                    thumbnail: "./images/camara-2-thumb.jpg",
-                  },
+                    thumbnail: "./images/camara-2-thumb.jpg"
+                  }
                 ],
                 offer: true,
-                new: true,
+                new: true
               },
               {
                 name: "Camara PL2",
@@ -276,15 +273,15 @@
                 images: [
                   {
                     image: "./images/camara.jpg",
-                    thumbnail: "./images/camara-thumb.jpg",
+                    thumbnail: "./images/camara-thumb.jpg"
                   },
                   {
                     image: "./images/camara-2.jpg",
-                    thumbnail: "./images/camara-2-thumb.jpg",
-                  },
+                    thumbnail: "./images/camara-2-thumb.jpg"
+                  }
                 ],
                 offer: true,
-                new: true,
+                new: true
               },
               {
                 name: "Camara PL2",
@@ -297,15 +294,15 @@
                 images: [
                   {
                     image: "./images/camara.jpg",
-                    thumbnail: "./images/camara-thumb.jpg",
+                    thumbnail: "./images/camara-thumb.jpg"
                   },
                   {
                     image: "./images/camara-2.jpg",
-                    thumbnail: "./images/camara-2-thumb.jpg",
-                  },
+                    thumbnail: "./images/camara-2-thumb.jpg"
+                  }
                 ],
                 offer: true,
-                new: true,
+                new: true
               },
               {
                 name: "Camara PL2",
@@ -318,19 +315,19 @@
                 images: [
                   {
                     image: "./images/camara.jpg",
-                    thumbnail: "./images/camara-thumb.jpg",
+                    thumbnail: "./images/camara-thumb.jpg"
                   },
                   {
                     image: "./images/camara-2.jpg",
-                    thumbnail: "./images/camara-2-thumb.jpg",
-                  },
+                    thumbnail: "./images/camara-2-thumb.jpg"
+                  }
                 ],
                 offer: true,
-                new: true,
-              },
-            ],
+                new: true
+              }
+            ]
           };
-        },
+        }
       });
       app.mount("#app");
     </script>
