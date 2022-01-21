@@ -26,7 +26,7 @@ app.component("product", {
       <p class="description__status" v-else-if="product.stock === 1">
         Ultima unidad disponible!
       </p>
-      <p class="description__price">
+      <p class="description__price" :style="{ color: price_color }">
         $ {{ new Intl.NumberFormat("es-CO").format(product.price) }}
       </p>
       <p class="description__content">
@@ -42,24 +42,36 @@ app.component("product", {
           @keyup.enter="applyDiscount($event)"
         />
       </div>
-      <button :disabled="product.stock === 0" @click="addToCart()">Agregar al carrito</button>
+      <button :disabled="product.stock === 0" @click="sendToCart()">Agregar al carrito</button>
     </section>
   `,
   props: ["product"],
-  setup(props) {
+  emits: ["sendtocart"],
+  setup(props, context) {
     const productState = reactive({
-      activeImage: 0
+      activeImage: 0,
+      price_color: "rgb(104, 104, 209)"
     });
 
-    function addToCart() {
-      const prodIndex = cartState.cart.findIndex(prod => prod.name === props.product.name);
-      if (prodIndex >= 0) {
-        cartState.cart[prodIndex].quantity += 1;
-      } else {
-        cartState.cart.push(props.product);
-      }
-      props.product.stock -= 1;
+    function sendToCart() {
+      context.emit("sendtocart", props.product);
     }
+
+    watch(
+      () => productState.activeImage,
+      (value, oldValue) => {
+        console.log(value, oldValue);
+      }
+    );
+
+    watch(
+      () => props.product.stock,
+      stock => {
+        if (stock <= 1) {
+          productState.price_color = "rgb(188 30 67)";
+        }
+      }
+    );
 
     const discountCodes = ref(["PLATZI20", "IOSAMUEL"]);
     function applyDiscount(event) {
@@ -73,7 +85,7 @@ app.component("product", {
     return {
       ...toRefs(productState),
 
-      addToCart,
+      sendToCart,
 
       applyDiscount
     };
